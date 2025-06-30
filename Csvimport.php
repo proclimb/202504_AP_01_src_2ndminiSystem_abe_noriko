@@ -31,7 +31,6 @@ if (($handle = fopen($csvFile, 'r')) !== false) {
     echo '<p><a href="index.php">トップに戻る</a></p>';
     exit;
 }
-
 // 3) DB トランザクション開始
 try {
     $pdo->beginTransaction();
@@ -57,9 +56,10 @@ try {
         }
         // カラム２～５を取得（例: $row[2]='0600000', $row[3]='北海道', $row[4]='札幌市中央区', $row[5]='…'）
         $postal   = trim($row[2]);
-        $pref     = trim($row[3]);
-        $city     = trim($row[4]);
-        $town     = trim($row[5]);
+        $pref     = trim($row[6]);
+        $city     = trim($row[7]);
+        $town     = trim($row[8]);
+
 
         // 郵便番号が7桁でない行はスキップ
         if ($postal === '' || mb_strlen($postal) !== 7) {

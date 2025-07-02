@@ -5,7 +5,11 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!zip) {
             alert('郵便番号を入力してください');
             return;
+        } else if (zip.match(/^[0-9]{3}-[0-9]{4}$/) == null) {
+            alert('郵便番号は「000-0000」の形式で入力してください');
+            return;
         }
+
 
         fetch('Searchaddress.php', {
             method: 'POST',

@@ -66,10 +66,8 @@ class Validator
             $this->error_message['tel'] = '空白を削除してください';
         } elseif (!preg_match('/[0-9]/', $data['tel'])) {
             $this->error_message['tel'] = '数字を入力してください';
-        } elseif (strpos($data['tel'], '-') === false) {
-            $this->error_message['tel'] = '電話番号に-（ハイフン）を入力してください';
-        } elseif (mb_strlen($data['tel']) < 12 || mb_strlen($data['tel']) > 13) {
-            $this->error_message['tel'] = '電話番号は-（ハイフン）を入れて12～13桁で入力してください';
+        } elseif (!preg_match('/^0\d{1,4}-\d{1,4}-\d{3,4}$/', $data['tel'] ?? '')) {
+            $this->error_message['tel'] = '電話番号の形式が正しくありません（例: 090-1234-5678）';
         }
 
         // メールアドレス

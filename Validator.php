@@ -14,6 +14,10 @@ class Validator
             $this->error_message['name'] = '名前が入力されていません';
         } elseif (mb_strlen($data['name']) > 20) {
             $this->error_message['name'] = '名前は20文字以内で入力してください';
+        } elseif (preg_match('/^(\s|　)|[\s　]$/u', $data['name'])) {
+            $this->error_message['name'] = '前後の空白を削除してください';
+        } elseif (!preg_match('/^[\p{Han}\p{Hiragana}\p{Katakana}ー\s　]+$/u', $data['name'])) {
+            $this->error_message['name'] = '日本語(漢字、ひらがな、カタカナ)で入力してください';
         }
 
         // ふりがな
@@ -31,13 +35,19 @@ class Validator
             $this->error_message['birth_date'] = '生年月日が入力されていません';
         } elseif (!$this->isValidDate($data['birth_year'] ?? '', $data['birth_month'] ?? '', $data['birth_day'] ?? '')) {
             $this->error_message['birth_date'] = '生年月日が正しくありません';
+        } else {
+            $inputDate = sprintf('%04d-%02d-%02d', (int)$data['birth_year'], (int)$data['birth_month'], (int)$data['birth_day']);
+            $today = date('Y-m-d');
+            if ($inputDate > $today) {
+                $this->error_message['birth_date'] = '生年月日は未来の日付は入力できません';
+            }
         }
 
         // 郵便番号
         if (empty($data['postal_code'])) {
             $this->error_message['postal_code'] = '郵便番号が入力されていません';
         } elseif (!preg_match('/^[0-9]{3}-[0-9]{4}$/', $data['postal_code'] ?? '')) {
-            $this->error_message['postal_code'] = '郵便番号が正しくありません';
+            $this->error_message['postal_code'] = '郵便番号の形式が正しくありません（例: 123-4567）';
         }
 
         // 住所
@@ -52,12 +62,14 @@ class Validator
         // 電話番号
         if (empty($data['tel'])) {
             $this->error_message['tel'] = '電話番号が入力されていません';
-        } elseif (
-            !preg_match('/^0\d{1,4}-\d{1,4}-\d{3,4}$/', $data['tel'] ?? '') ||
-            mb_strlen($data['tel']) < 12 ||
-            mb_strlen($data['tel']) > 13
-        ) {
-            $this->error_message['tel'] = '電話番号は12~13桁で正しく入力してください';
+        } elseif (preg_match('/\s/', $data['tel'])) {
+            $this->error_message['tel'] = '空白を削除してください';
+        } elseif (!preg_match('/[0-9]/', $data['tel'])) {
+            $this->error_message['tel'] = '数字を入力してください';
+        } elseif (strpos($data['tel'], '-') === false) {
+            $this->error_message['tel'] = '電話番号に-（ハイフン）を入力してください';
+        } elseif (mb_strlen($data['tel']) < 12 || mb_strlen($data['tel']) > 13) {
+            $this->error_message['tel'] = '電話番号は-（ハイフン）を入れて12～13桁で入力してください';
         }
 
         // メールアドレス

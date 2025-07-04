@@ -5,7 +5,7 @@ class Validator
     private $error_message = [];
 
     // 呼び出し元で使う
-    public function validate($data)
+    public function validate($data, $options = [])
     {
         $this->error_message = [];
 
@@ -29,17 +29,18 @@ class Validator
             $this->error_message['kana'] = 'ふりがなは20文字以内で入力してください';
         }
 
-
-        // 生年月日
-        if (empty($data['birth_year']) || empty($data['birth_month']) || empty($data['birth_day'])) {
-            $this->error_message['birth_date'] = '生年月日が入力されていません';
-        } elseif (!$this->isValidDate($data['birth_year'] ?? '', $data['birth_month'] ?? '', $data['birth_day'] ?? '')) {
-            $this->error_message['birth_date'] = '生年月日が正しくありません';
-        } else {
-            $inputDate = sprintf('%04d-%02d-%02d', (int)$data['birth_year'], (int)$data['birth_month'], (int)$data['birth_day']);
-            $today = date('Y-m-d');
-            if ($inputDate > $today) {
-                $this->error_message['birth_date'] = '生年月日は未来の日付は入力できません';
+        // 生年月日（スキップ可能）
+        if (empty($options['skip_birth_date'])) {
+            if (empty($data['birth_year']) || empty($data['birth_month']) || empty($data['birth_day'])) {
+                $this->error_message['birth_date'] = '生年月日が入力されていません';
+            } elseif (!$this->isValidDate($data['birth_year'] ?? '', $data['birth_month'] ?? '', $data['birth_day'] ?? '')) {
+                $this->error_message['birth_date'] = '生年月日が正しくありません';
+            } else {
+                $inputDate = sprintf('%04d-%02d-%02d', (int)$data['birth_year'], (int)$data['birth_month'], (int)$data['birth_day']);
+                $today = date('Y-m-d');
+                if ($inputDate > $today) {
+                    $this->error_message['birth_date'] = '生年月日は未来の日付は入力できません';
+                }
             }
         }
 

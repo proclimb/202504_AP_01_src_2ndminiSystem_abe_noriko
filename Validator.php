@@ -78,6 +78,22 @@ class Validator
             $this->error_message['email'] = '有効なメールアドレスを入力してください';
         }
 
+        // 本人確認書類（edit.phpからのみチェック、添付は任意・形式のみ）
+        if (!empty($options['check_documents'])) {
+            if (isset($_FILES['document1']) && $_FILES['document1']['error'] !== UPLOAD_ERR_NO_FILE) {
+                $allowed = ['image/png', 'image/jpeg', 'image/jpg'];
+                if (!in_array($_FILES['document1']['type'], $allowed, true)) {
+                    $this->error_message['document1'] = '本人確認書類（表）はPNG/JPEG画像のみアップロード可能です';
+                }
+            }
+            if (isset($_FILES['document2']) && $_FILES['document2']['error'] !== UPLOAD_ERR_NO_FILE) {
+                $allowed = ['image/png', 'image/jpeg', 'image/jpg'];
+                if (!in_array($_FILES['document2']['type'], $allowed, true)) {
+                    $this->error_message['document2'] = '本人確認書類（裏）はPNG/JPEG画像のみアップロード可能です';
+                }
+            }
+        }
+
         return empty($this->error_message);
     }
 

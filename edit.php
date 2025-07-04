@@ -40,8 +40,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && $id) {
 // 更新ボタン押下時（POST）
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['name'])) {
     $validator = new Validator();
-    // 生年月日チェックをスキップするフラグを渡す
-    if ($validator->validate($_POST, ['skip_birth_date' => true])) {
+    // 生年月日チェックをスキップし、本人確認書類の形式チェックも有効化（添付は必須ではない）
+    if ($validator->validate($_POST, ['skip_birth_date' => true, 'check_documents' => true])) {
         $_SESSION['edit_data'] = $_POST;
         header('Location: update.php');
         exit();

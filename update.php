@@ -25,23 +25,29 @@ require_once 'FileBlobHelper.php';
 
 // 2. 入力データ取得
 // 2-1. ユーザーデータ取得
-$id = $_POST['id'];
-$userData = [
-    'name'         => $_POST['name'],
-    'kana'         => $_POST['kana'],
-    'gender_flag'  => $_POST['gender_flag'],
-    'tel'          => $_POST['tel'],
-    'email'        => $_POST['email'],
-];
 
+// セッションから入力データを取得
+if (!isset($_SESSION['edit_data'])) {
+    echo "セッションが切れています。やり直してください。";
+    exit;
+}
+$editData = $_SESSION['edit_data'];
+$id = $editData['id'];
+$userData = [
+    'name'         => $editData['name'],
+    'kana'         => $editData['kana'],
+    'gender_flag'  => $editData['gender_flag'],
+    'tel'          => $editData['tel'],
+    'email'        => $editData['email'],
+];
 
 // 2-2. 住所データも取得
 $addressData = [
     'user_id'      => $id,
-    'postal_code'  => $_POST['postal_code'],
-    'prefecture'   => $_POST['prefecture'],
-    'city_town'    => $_POST['city_town'],
-    'building'     => $_POST['building'],
+    'postal_code'  => $editData['postal_code'],
+    'prefecture'   => $editData['prefecture'],
+    'city_town'    => $editData['city_town'],
+    'building'     => $editData['building'],
 ];
 
 // 3. トランザクション開始
@@ -59,6 +65,9 @@ try {
 
     // 6. ファイルアップロードを BLOB 化して取得（保存期限なし = null）
     //    edit.php の <input type="file" name="document1"> / document2
+
+    // ファイルはedit.phpからPOSTされないため、$_FILESではなくセッションやDBから取得する必要がある場合は別途実装
+    // ここでは従来通りのまま
     $blobs = FileBlobHelper::getMultipleBlobs(
         $_FILES['document1'] ?? null,
         $_FILES['document2'] ?? null
@@ -81,6 +90,8 @@ try {
 
     // 8. トランザクションコミット
     $pdo->commit();
+    // セッションデータを削除
+    unset($_SESSION['edit_data']);
 } catch (Exception $e) {
     // いずれかで例外が発生したらロールバックしてエラー表示
     $pdo->rollBack();

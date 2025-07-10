@@ -1,109 +1,100 @@
 /**
  * 各項目の入力を行う
  */
-function validate() {
 
-    // 1.エラー有無の初期化(true:エラーなし、false：エラーあり)
-    var flag = true;
+window.addEventListener('DOMContentLoaded', function () {
+    var form = document.forms['edit'] || document.forms['form'];
+    if (!form) return;
 
-    // 2.エラーメッセージを削除
-    removeElementsByClass("error");
-    removeClass("error-form");
+    // 必須項目のblurイベントでエラーメッセージ表示
+    var requiredFields = [
+        { name: 'name', msg: 'お名前が入力されていません' },
+        { name: 'kana', msg: 'ふりがなが入力されていません' },
+        { name: 'postal_code', msg: '郵便番号が入力されていません' },
+        { name: 'prefecture', msg: '都道府県が入力されていません' },
+        { name: 'city_town', msg: '市区町村が入力されていません' },
+        { name: 'tel', msg: '電話番号が入力されていません' },
+        { name: 'email', msg: 'メールアドレスが入力されていません' }
+    ];
+    requiredFields.forEach(function (field) {
+        var el = form[field.name];
+        if (el) {
+            el.addEventListener('blur', function () {
+                // 既存エラー削除
+                removeElementsByClass('error');
+                removeClass('error-form');
+                if (el.value === '') {
+                    errorElement(el, field.msg);
+                }
+            });
+        }
+    });
 
-    // 3.お名前の入力をチェック
-    // 3-1.必須チェック
-    if (document.edit.name.value == "") {
-        errorElement(document.edit.name, "お名前が入力されていません");
-        flag = false;
-    }
+    // submit時のバリデーション（従来通り）
+    form.addEventListener('submit', function (e) {
+        var flag = true;
+        removeElementsByClass("error");
+        removeClass("error-form");
 
-    // 4.ふりがなの入力をチェック
-    // 4-1.必須チェック
-    if (document.edit.kana.value == "") {
-        errorElement(document.edit.kana, "ふりがなが入力されていません");
-        flag = false;
-    } else {
-        // 4-2.ひらがなのチェック
-        if (!validateKana(document.edit.kana.value)) {
-            errorElement(document.edit.kana, "ひらがなを入れて下さい");
+        // 必須チェック
+        requiredFields.forEach(function (field) {
+            var el = form[field.name];
+            if (el && el.value === '') {
+                errorElement(el, field.msg);
+                flag = false;
+            }
+        });
+
+        // ふりがな ひらがなチェック
+        if (form.kana && form.kana.value !== '' && !validateKana(form.kana.value)) {
+            errorElement(form.kana, "ひらがなを入れて下さい");
             flag = false;
         }
-    }
 
-    // 郵便番号
-    if (document.edit.postal_code.value === "") {
-        errorElement(document.edit.postal_code, "郵便番号が入力されていません");
-        flag = false;
-    } else if (!/^\d{3}-\d{4}$/.test(document.edit.postal_code.value)) {
-        errorElement(document.edit.postal_code, "郵便番号の形式が正しくありません（例: 123-4567）");
-        flag = false;
-    }
-
-    // 住所（都道府県、市区町村）
-    if (document.edit.prefecture.value === "") {
-        errorElement(document.edit.prefecture, "都道府県が入力されていません");
-        flag = false;
-    }
-    if (document.edit.city_town.value === "") {
-        errorElement(document.edit.city_town, "市区町村が入力されていません");
-        flag = false;
-    }
-
-    // 6.電話番号の入力をチェック
-    // 6-1.必須チェック
-    if (document.edit.tel.value == "") {
-        errorElement(document.edit.tel, "電話番号が入力されていません");
-        flag = false;
-    } else {
-        // 6-2.電話番号の長さをチェック
-        if (!validateTel(document.edit.tel.value)) {
-            errorElement(document.edit.tel, "電話番号が違います");
+        // 郵便番号形式
+        if (form.postal_code && form.postal_code.value !== '' && !/^\d{3}-\d{4}$/.test(form.postal_code.value)) {
+            errorElement(form.postal_code, "郵便番号の形式が正しくありません（例: 123-4567）");
             flag = false;
         }
-    }
 
-    // 5.メールアドレスの入力をチェック
-    // 5-1.必須チェック
-    if (document.edit.email.value == "") {
-        errorElement(document.edit.email, "メールアドレスが入力されていません");
-        flag = false;
-    } else {
-        // 5-2.メールアドレスの形式をチェック
-        if (!validateMail(document.edit.email.value)) {
-            errorElement(document.edit.email, "メールアドレスが正しくありません");
+        // 電話番号形式
+        if (form.tel && form.tel.value !== '' && !validateTel(form.tel.value)) {
+            errorElement(form.tel, "電話番号が違います");
             flag = false;
         }
-    }
 
-    // document1 のチェック
-    var fileInput1 = document.edit.document1;
-    if (fileInput1 && fileInput1.files.length > 0) {
-        var file1 = fileInput1.files[0];
-        var type1 = file1.type;
-        // PNG もしくは JPEG 以外はエラー
-        if (type1 !== "image/png" && type1 !== "image/jpeg") {
-            errorElement(fileInput1, "ファイル形式は PNG または JPEG のみ許可されています");
+        // メールアドレス形式
+        if (form.email && form.email.value !== '' && !validateMail(form.email.value)) {
+            errorElement(form.email, "メールアドレスが正しくありません");
             flag = false;
         }
-    }
-    // document2 のチェック
-    var fileInput2 = document.edit.document2;
-    if (fileInput2 && fileInput2.files.length > 0) {
-        var file2 = fileInput2.files[0];
-        var type2 = file2.type;
-        if (type2 !== "image/png" && type2 !== "image/jpeg") {
-            errorElement(fileInput2, "ファイル形式は PNG または JPEG のみ許可されています");
-            flag = false;
+
+        // document1 のチェック
+        var fileInput1 = form.document1;
+        if (fileInput1 && fileInput1.files && fileInput1.files.length > 0) {
+            var file1 = fileInput1.files[0];
+            var type1 = file1.type;
+            if (type1 !== "image/png" && type1 !== "image/jpeg") {
+                errorElement(fileInput1, "ファイル形式は PNG または JPEG のみ許可されています");
+                flag = false;
+            }
         }
-    }
+        // document2 のチェック
+        var fileInput2 = form.document2;
+        if (fileInput2 && fileInput2.files && fileInput2.files.length > 0) {
+            var file2 = fileInput2.files[0];
+            var type2 = file2.type;
+            if (type2 !== "image/png" && type2 !== "image/jpeg") {
+                errorElement(fileInput2, "ファイル形式は PNG または JPEG のみ許可されています");
+                flag = false;
+            }
+        }
 
-    // 7.エラーチェック
-    if (flag) {
-        document.edit.submit();
-    }
-
-    return false;
-}
+        if (!flag) {
+            e.preventDefault();
+        }
+    });
+});
 
 
 /**

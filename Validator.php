@@ -23,10 +23,16 @@ class Validator
         // ふりがな
         if (empty($data['kana'])) {
             $this->error_message['kana'] = 'ふりがなが入力されていません';
-        } elseif (preg_match('/[^ぁ-んー]/u', $data['kana'])) {
-            $this->error_message['kana'] = 'ひらがなで入力してください';
-        } elseif (mb_strlen($data['kana']) > 20) {
-            $this->error_message['kana'] = 'ふりがなは20文字以内で入力してください';
+        } else {
+            // 前後の空白を除去
+            $trimmedKana = preg_replace('/^[\s　]+|[\s　]+$/u', '', $data['kana']);
+            if ($trimmedKana !== $data['kana']) {
+                $this->error_message['kana'] = '前後の空白を削除してください';
+            } elseif (preg_match('/[^ぁ-んー\s　]/u', $trimmedKana)) {
+                $this->error_message['kana'] = 'ひらがなで入力してください';
+            } elseif (mb_strlen($trimmedKana) > 20) {
+                $this->error_message['kana'] = 'ふりがなは20文字以内で入力してください';
+            }
         }
 
         // 生年月日（スキップ可能）

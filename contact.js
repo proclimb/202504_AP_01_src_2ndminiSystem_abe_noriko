@@ -16,13 +16,17 @@ window.addEventListener('DOMContentLoaded', function () {
         { name: 'tel', msg: '電話番号が入力されていません' },
         { name: 'email', msg: 'メールアドレスが入力されていません' }
     ];
+
+    // 入力時（inputイベント）でリアルタイム簡易チェック（必須のみ、形式はsubmit時のみ）
     requiredFields.forEach(function (field) {
         var el = form[field.name];
         if (el) {
-            el.addEventListener('blur', function () {
-                // 既存エラー削除
-                removeElementsByClass('error');
-                removeClass('error-form');
+            el.addEventListener('input', function () {
+                var next = el.nextSibling;
+                if (next && next.className === 'error') {
+                    next.parentNode.removeChild(next);
+                }
+                el.classList.remove('error-form');
                 if (el.value === '') {
                     errorElement(el, field.msg);
                 }
@@ -30,7 +34,22 @@ window.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // submit時のバリデーション（従来通り）
+    // 画面遷移直後に全必須項目の空欄を即時チェック（初回表示時のみ）
+    // index.phpから遷移した場合はエラーを表示しない（全項目が空欄＝初回アクセス判定）
+    var allEmpty = requiredFields.every(function(field) {
+        var el = form[field.name];
+        return el && el.value === '';
+    });
+    if (!allEmpty) {
+        requiredFields.forEach(function (field) {
+            var el = form[field.name];
+            if (el && el.value === '') {
+                errorElement(el, field.msg);
+            }
+        });
+    }
+
+    // submit時のバリデーション（サーバ側Validator.phpと同じ必須・形式チェック）
     form.addEventListener('submit', function (e) {
         var flag = true;
         removeElementsByClass("error");

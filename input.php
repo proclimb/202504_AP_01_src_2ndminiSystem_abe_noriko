@@ -71,6 +71,7 @@ session_destroy();
     <title>mini System</title>
     <link rel="stylesheet" href="style_new.css">
     <script src="postalcodesearch.js"></script>
+    <script src="contact.js"></script>
 </head>
 
 <body>

@@ -1,3 +1,41 @@
+/* --- 入力フォーム用エラーメッセージ・フィールドレイアウト --- */
+.error-msg {
+    color: red;
+    font-size: 0.85em;
+    margin-top: 4px;
+    margin-bottom: 8px;
+    display: block;
+    white-space: normal;
+    word-break: break-word;
+    max-width: 100%;
+    min-height: 1.5em;
+    /* 常にスペースを確保 */
+}
+
+.error-form {
+    border: 1px solid red !important;
+}
+
+/* 例：フォームの1フィールドをブロック化 */
+.form-field {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 入力欄直下にエラー表示スペースを常に確保 */
+.form-field input[type="text"],
+.form-field input[type="email"],
+.form-field textarea,
+.form-field select {
+    margin-bottom: 0px;
+}
+
+.form-field .error-msg {
+    min-height: 1.5em;
+    margin-bottom: 8px;
+}
+
 /*!
  * Bootstrap v3.3.5 (http://getbootstrap.com)
  * Copyright 2011-2015 Twitter, Inc.
@@ -412,13 +450,14 @@ input[type=button] {
 }
 
 /* 8623~8625 */
-input+div,
-select+div,
-textarea+div {
-    float: right;
-    width: 420px;
+.form-field .error-msg,
+.form-field .error-msg2 {
+    float: none !important;
+    width: auto !important;
+    display: block;
     color: red;
-    margin-bottom: -10px;
+    margin-bottom: 8px;
+    margin-top: 4px;
 }
 
 /* 8632 */

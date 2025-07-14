@@ -55,8 +55,10 @@ if (!empty($_POST) && empty($_SESSION['input_data'])) {
     }
 }
 
-// 4.セッションを破棄する
-session_destroy();
+// 4.セッションを破棄する（POST送信時のみ破棄）
+if (!empty($_POST) && empty($_SESSION['input_data'])) {
+    session_destroy();
+}
 
 // 5.html の描画
 // ** これ以降は、htmlの部分になります
@@ -71,7 +73,7 @@ session_destroy();
     <title>mini System</title>
     <link rel="stylesheet" href="style_new.css">
     <script src="postalcodesearch.js"></script>
-    <script src="contact.js" defer></script>
+    <script src="contact.js"></script>
 </head>
 
 <body>
@@ -198,7 +200,7 @@ session_destroy();
                             id="searchAddressBtn">住所検索</button>
                     </div>
                     <?php if (isset($error_message['postal_code'])) : ?>
-                        <div class="error-msg2">
+                        <div class="error-msg">
                             <?= htmlspecialchars($error_message['postal_code']) ?></div>
                     <?php endif ?>
                 </div>

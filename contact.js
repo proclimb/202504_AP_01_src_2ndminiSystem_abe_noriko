@@ -2,10 +2,10 @@
  * 各項目の入力を行う
  */
 
-window.addEventListener('DOMContentLoaded', function () {
-    var form = document.forms['edit'] || document.forms['form'];
-    if (!form) return;
 
+// defer属性で読み込む前提で、グローバルスコープでDOM操作
+var form = document.forms['edit'] || document.forms['form'];
+if (form) {
     // 必須項目のblurイベントでエラーメッセージ表示
     var requiredFields = [
         { name: 'name', msg: 'お名前が入力されていません' },
@@ -27,16 +27,31 @@ window.addEventListener('DOMContentLoaded', function () {
                     next.parentNode.removeChild(next);
                 }
                 el.classList.remove('error-form');
-                if (el.value === '') {
-                    errorElement(el, field.msg);
+                // 名前のみ厳密チェック（日本語2～20文字）
+                if (field.name === 'name') {
+                    if (el.value === '') {
+                        errorElement(el, field.msg);
+                    } else if (!validateName(el.value)) {
+                        errorElement(el, 'お名前は全角日本語2～20文字で入力してください');
+                    }
+                } else {
+                    if (el.value === '') {
+                        errorElement(el, field.msg);
+                    }
                 }
             });
         }
     });
 
+    // 名前バリデーション（全角日本語2～20文字）
+    function validateName(val) {
+        // 全角ひらがな・カタカナ・漢字・長音・全角スペースのみ、2～20文字
+        return /^([\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFFー　]{2,20})$/.test(val);
+    }
+
     // 画面遷移直後に全必須項目の空欄を即時チェック（初回表示時のみ）
     // index.phpから遷移した場合はエラーを表示しない（全項目が空欄＝初回アクセス判定）
-    var allEmpty = requiredFields.every(function(field) {
+    var allEmpty = requiredFields.every(function (field) {
         var el = form[field.name];
         return el && el.value === '';
     });
@@ -113,7 +128,7 @@ window.addEventListener('DOMContentLoaded', function () {
             e.preventDefault();
         }
     });
-});
+}
 
 
 /**
@@ -122,23 +137,17 @@ window.addEventListener('DOMContentLoaded', function () {
  * @param {*} msg 表示するエラーメッセージ
  */
 var errorElement = function (form, msg) {
-
     // 1.項目タグに error-form のスタイルを適用させる
     form.className = "error-form";
-
     // 2.エラーメッセージの追加
     // 2-1.divタグの作成
     var newElement = document.createElement("div");
-
-    // 2-2.error のスタイルを作成する
-    newElement.className = "error";
-
+    // 2-2.error-msg のスタイルを作成する（PHP側と統一）
+    newElement.className = "error-msg";
     // 2-3.エラーメッセージのテキスト要素を作成する
     var newText = document.createTextNode(msg);
-
     // 2-4.2-1のdivタグに2-3のテキストを追加する
     newElement.appendChild(newText);
-
     // 2-5.項目タグの次の要素として、2-1のdivタグを追加する
     form.parentNode.insertBefore(newElement, form.nextSibling);
 }
@@ -150,12 +159,17 @@ var errorElement = function (form, msg) {
  * @param {*} className 削除するスタイルのクラス名
  */
 var removeElementsByClass = function (className) {
-
     // 1.html内から className の要素を全て取得する
     var elements = document.getElementsByClassName(className);
     while (elements.length > 0) {
-        // 2.取得した全ての要素を削除する
         elements[0].parentNode.removeChild(elements[0]);
+    }
+    // PHP側のエラーclassも削除
+    if (className === "error") {
+        var phpErrs = document.getElementsByClassName("error-msg");
+        while (phpErrs.length > 0) {
+            phpErrs[0].parentNode.removeChild(phpErrs[0]);
+        }
     }
 }
 

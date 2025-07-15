@@ -12,6 +12,8 @@ class Validator
         // 名前
         if (empty($data['name'])) {
             $this->error_message['name'] = '名前が入力されていません';
+        } elseif (mb_strlen($data['name']) < 2) {
+            $this->error_message['name'] = '名前は2文字以上で入力してください';
         } elseif (mb_strlen($data['name']) > 20) {
             $this->error_message['name'] = '名前は20文字以内で入力してください';
         } elseif (preg_match('/^(\s|　)|[\s　]$/u', $data['name'])) {

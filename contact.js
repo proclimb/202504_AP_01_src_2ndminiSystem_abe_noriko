@@ -69,18 +69,28 @@ if (form) {
                     next.parentNode.removeChild(next);
                 }
                 el.classList.remove('error-form');
-                // 各項目ごとにリアルタイム形式チェック
+                // 各項目ごとにリアルタイム形式チェック（サーバサイドと同等の厳密さ）
                 if (field.name === 'name') {
                     if (el.value === '') {
                         errorElement(el, field.msg);
-                    } else if (!validateName(el.value)) {
-                        errorElement(el, 'お名前は全角日本語2～20文字で入力してください');
+                    } else if (el.value.length < 2) {
+                        errorElement(el, '名前は2文字以上で入力してください');
+                    } else if (el.value.length > 20) {
+                        errorElement(el, '名前は20文字以内で入力してください');
+                    } else if (/^(\s|　)|[\s　]$/.test(el.value)) {
+                        errorElement(el, '前後の空白を削除してください');
+                    } else if (!/^([\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFFー　]+)$/.test(el.value)) {
+                        errorElement(el, '日本語(漢字、ひらがな、カタカナ)で入力してください');
                     }
                 } else if (field.name === 'kana') {
                     if (el.value === '') {
                         errorElement(el, field.msg);
-                    } else if (!validateKana(el.value)) {
-                        errorElement(el, 'ひらがなのみ入力できます');
+                    } else if (/^[\s　]+|[\s　]+$/.test(el.value)) {
+                        errorElement(el, '前後の空白を削除してください');
+                    } else if (!/^[ぁ-んー\s　]+$/.test(el.value)) {
+                        errorElement(el, 'ひらがなで入力してください');
+                    } else if (el.value.length > 20) {
+                        errorElement(el, 'ふりがなは20文字以内で入力してください');
                     }
                 } else if (field.name === 'postal_code') {
                     if (el.value === '') {
@@ -91,14 +101,18 @@ if (form) {
                 } else if (field.name === 'tel') {
                     if (el.value === '') {
                         errorElement(el, field.msg);
-                    } else if (!validateTel(el.value)) {
-                        errorElement(el, '電話番号が違います');
+                    } else if (/\s/.test(el.value)) {
+                        errorElement(el, '空白を削除してください');
+                    } else if (!/[0-9]/.test(el.value)) {
+                        errorElement(el, '数字を入力してください');
+                    } else if (!/^0\d{1,4}-\d{1,4}-\d{3,4}$/.test(el.value)) {
+                        errorElement(el, '電話番号の形式が正しくありません（例: 090-1234-5678）');
                     }
                 } else if (field.name === 'email') {
                     if (el.value === '') {
                         errorElement(el, field.msg);
                     } else if (!validateMail(el.value)) {
-                        errorElement(el, 'メールアドレスが正しくありません');
+                        errorElement(el, '有効なメールアドレスを入力してください');
                     }
                 } else {
                     if (el.value === '') {

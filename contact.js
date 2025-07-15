@@ -1,11 +1,52 @@
-/**
- * 各項目の入力を行う
- */
-
-
-// defer属性で読み込む前提で、グローバルスコープでDOM操作
+// defer属性で読み込む前提で、グローバルスコープでformを先に取得
 var form = document.forms['edit'] || document.forms['form'];
+
+// 生年月日リアルタイムバリデーション
 if (form) {
+    var yearSel = form['birth_year'];
+    var monthSel = form['birth_month'];
+    var daySel = form['birth_day'];
+    if (yearSel && monthSel && daySel) {
+        var birthInputs = [yearSel, monthSel, daySel];
+        birthInputs.forEach(function (el) {
+            el.addEventListener('change', validateBirthDate);
+        });
+    }
+    function validateBirthDate() {
+        // 直後の.error-msg2を消す（重複防止）
+        var birthDiv = yearSel.parentNode.parentNode;
+        var next = birthDiv.querySelector('.error-msg2');
+        if (next) {
+            next.parentNode.removeChild(next);
+        }
+        var y = yearSel.value;
+        var m = monthSel.value;
+        var d = daySel.value;
+        var msg = '';
+        if (!y || !m || !d) {
+            msg = '生年月日をすべて選択してください';
+        } else {
+            var dateObj = new Date(y, m - 1, d);
+            if (dateObj.getFullYear() != y || dateObj.getMonth() != m - 1 || dateObj.getDate() != Number(d)) {
+                msg = '存在しない日付です';
+            } else {
+                var today = new Date();
+                today.setHours(0, 0, 0, 0);
+                var inputDate = new Date(y, m - 1, d);
+                if (inputDate > today) {
+                    msg = '生年月日に未来の日付は指定できません';
+                }
+            }
+        }
+        if (msg) {
+            var err = document.createElement('div');
+            err.className = 'error-msg2';
+            err.textContent = msg;
+            birthDiv.appendChild(err);
+        }
+    }
+
+    // ...既存のバリデーション処理...
     // 必須項目のblurイベントでエラーメッセージ表示
     var requiredFields = [
         { name: 'name', msg: 'お名前が入力されていません' },
@@ -17,22 +58,47 @@ if (form) {
         { name: 'email', msg: 'メールアドレスが入力されていません' }
     ];
 
-    // 入力時（inputイベント）でリアルタイム簡易チェック（必須のみ、形式はsubmit時のみ）
+    // 入力時（inputイベント）でリアルタイム簡易チェック
     requiredFields.forEach(function (field) {
         var el = form[field.name];
         if (el) {
             el.addEventListener('input', function () {
-                var next = el.nextSibling;
-                if (next && next.className === 'error') {
+                // 直後の.error-msgを消す（重複防止）
+                var next = el.nextElementSibling;
+                if (next && next.classList && next.classList.contains('error-msg')) {
                     next.parentNode.removeChild(next);
                 }
                 el.classList.remove('error-form');
-                // 名前のみ厳密チェック（日本語2～20文字）
+                // 各項目ごとにリアルタイム形式チェック
                 if (field.name === 'name') {
                     if (el.value === '') {
                         errorElement(el, field.msg);
                     } else if (!validateName(el.value)) {
                         errorElement(el, 'お名前は全角日本語2～20文字で入力してください');
+                    }
+                } else if (field.name === 'kana') {
+                    if (el.value === '') {
+                        errorElement(el, field.msg);
+                    } else if (!validateKana(el.value)) {
+                        errorElement(el, 'ひらがなのみ入力できます');
+                    }
+                } else if (field.name === 'postal_code') {
+                    if (el.value === '') {
+                        errorElement(el, field.msg);
+                    } else if (!/^\d{3}-\d{4}$/.test(el.value)) {
+                        errorElement(el, '郵便番号の形式が正しくありません（例: 123-4567）');
+                    }
+                } else if (field.name === 'tel') {
+                    if (el.value === '') {
+                        errorElement(el, field.msg);
+                    } else if (!validateTel(el.value)) {
+                        errorElement(el, '電話番号が違います');
+                    }
+                } else if (field.name === 'email') {
+                    if (el.value === '') {
+                        errorElement(el, field.msg);
+                    } else if (!validateMail(el.value)) {
+                        errorElement(el, 'メールアドレスが正しくありません');
                     }
                 } else {
                     if (el.value === '') {

@@ -145,6 +145,7 @@ if (form) {
     }
 
     // submit時のバリデーション（サーバ側Validator.phpと同じ必須・形式チェック）
+    /*
     form.addEventListener('submit', function (e) {
         var flag = true;
         removeElementsByClass("error");
@@ -208,6 +209,7 @@ if (form) {
             e.preventDefault();
         }
     });
+    */
 }
 
 

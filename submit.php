@@ -62,7 +62,7 @@ $address->create([
     'prefecture' => $_POST['prefecture'],
     'city_town' => $_POST['city_town'],
     'building' => $_POST['building']
-])
+]);
 
 // 4.html の描画
 ?>

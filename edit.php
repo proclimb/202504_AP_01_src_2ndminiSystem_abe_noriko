@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['name'])) {
     <title>mini System</title>
     <link rel="stylesheet" href="style_new.css">
     <script src="postalcodesearch.js"></script>
-    <!-- contact.jsはバリデーション用途で読み込まない -->
+    <script src="contact.js" defer></script>
 </head>
 
 <body>
@@ -103,9 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['name'])) {
                 <div>
                     <label>生年月日<span>必須</span></label>
                     <input type="text" name="birth_date" value="<?= htmlspecialchars($old['birth_date'] ?? '') ?>" readonly class="readonly-field">
-                    <?php if (isset($error_message['birth_date'])) : ?>
-                        <div class="error-msg2"><?= htmlspecialchars($error_message['birth_date']) ?></div>
-                    <?php endif ?>
+                    <!-- edit.phpでは生年月日のエラーメッセージは表示しない -->
                 </div>
                 <div>
                     <label>郵便番号<span>必須</span></label>

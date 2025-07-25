@@ -78,7 +78,7 @@ th {
 :after,
 :before {
     -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
+    -moz-box-sizing: border-sizing;
     box-sizing: border-box
 }
 
@@ -240,6 +240,12 @@ form>div {
 form>div>div {
     border-radius: 3px;
     padding: 10px 20px;
+    /* ★修正: エラーメッセージが隠れないように下マージンを調整 */
+    margin-bottom: 30px;
+    /* エラーメッセージの高さと次の要素との間隔を考慮 */
+    /* ★追加: 内部のフロートを正しく含むためのclearfix */
+    overflow: hidden;
+    /* Ensure floats are contained */
 }
 
 /* 8443,8444 */
@@ -317,6 +323,7 @@ body>div label {
     padding-right: 15px;
     padding-left: 15px;
     position: relative;
+    /* line-height: 38px; /* ★変更前: この行は削除 */
 }
 
 /* 8497 */
@@ -415,10 +422,24 @@ input[type=button] {
 input+div,
 select+div,
 textarea+div {
-    float: right;
-    width: 420px;
+    /* float: right; /* ★変更前: この行を修正 */
+    float: none;
+    /* ★修正: フロートを解除 */
+    /* width: 420px; /* ★変更前: この行を修正 */
+    width: auto;
+    /* ★修正: 幅を自動調整 */
     color: red;
-    margin-bottom: -10px;
+    /* margin-bottom: -10px; /* ★変更前: この行を修正 */
+    margin-bottom: 0;
+    /* ★修正: 負のマージンを解除 */
+    display: block;
+    /* ★追加: ブロック要素として表示 */
+    clear: both;
+    /* ★追加: 前のフロートをクリア */
+    margin-top: 5px;
+    /* ★追加: 上に少しスペース */
+    margin-left: 200px;
+    /* ★修正: 入力フィールドの開始位置に合わせる */
 }
 
 /* 8632 */
@@ -429,18 +450,38 @@ textarea+div {
 /* 8636 */
 .error-msg {
     color: red;
+    display: block;
+    /* ★追加: ブロック要素として表示 */
+    clear: both;
+    /* ★追加: 前のフロートをクリア */
+    margin-top: 5px;
+    /* ★追加: 上に少しスペース */
+    margin-left: 200px;
+    /* ★修正: 入力フィールドの開始位置に合わせる */
 }
 
 /* 新規追加 */
 .error-msg2 {
     color: red;
-    margin-left: 166px;
+    /* margin-left: 166px; /* ★変更前: この行を修正 */
+    margin-left: 200px;
+    /* ★修正: postal-row/birth-selects の開始位置に合わせる */
+    display: block;
+    /* ★追加: ブロック要素として表示 */
+    clear: both;
+    /* ★追加: 前のフロートをクリア */
+    margin-top: 5px;
+    /* ★追加: 上に少しスペース */
 }
 
 .birth-selects {
     display: flex;
     gap: 0px;
     padding: 0px 10px;
+    float: right;
+    min-width: 405px;
+    max-width: 405px;
+    margin: 0 15px;
 }
 
 .birth-selects select.form-control {
@@ -452,6 +493,13 @@ textarea+div {
 
 .postal-row {
     display: flex;
+    /* justify-content: flex-end; /* ★変更前: この行は削除 */
+    /* align-items: center; /* ★変更前: この行は削除 */
+    /* gap: 10px; /* ★変更前: この行は削除 */
+    float: right;
+    min-width: 405px;
+    max-width: 405px;
+    margin: 0 15px;
 }
 
 button.postal-code-search {
@@ -688,6 +736,36 @@ input.readonly-field[type="text"] {
     color: #007ea8;
 }
 
-/* -------------------------------------------------------------------
-   ↑ ここまで変更・追加箇所
-   ------------------------------------------------------------------- */
+/* 全体エラーメッセージコンテナのスタイル */
+.error-messages {
+    color: red;
+    margin-bottom: 20px;
+    padding: 10px;
+    border: 1px solid red;
+    background-color: #ffebeb;
+    border-radius: 5px;
+    clear: both;
+    /* ★追加: フォーム内のフロートをクリア */
+    width: 80%;
+    /* ★追加: フォームと同じ幅に調整 */
+    margin: 20px auto;
+    /* ★追加: 中央寄せ */
+}
+
+.error-messages p {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.error-messages ul {
+    list-style-type: disc;
+    /* ★修正: リストスタイルをディスクに */
+    padding-left: 20px;
+    /* ★修正: 左パディングを追加 */
+    margin: 0;
+}
+
+.error-messages li {
+    margin-bottom: 5px;
+}

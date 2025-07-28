@@ -77,6 +77,19 @@ class Validator
             $this->error_message['tel'] = '数字を入力してください';
         } elseif (!preg_match('/^0\d{1,4}-\d{1,4}-\d{3,4}$/', $data['tel'] ?? '')) {
             $this->error_message['tel'] = '電話番号の形式が正しくありません（例: 090-1234-5678）';
+        } else {
+            // ハイフン除去して桁数判定
+            $digits = preg_replace('/[^0-9]/', '', $data['tel']);
+            if (strlen($digits) < 12 || strlen($digits) > 13) {
+                $this->error_message['tel'] = '電話番号は12～13桁で入力してください';
+            } else {
+                // 例: 0000-1111-2222などの不正な番号を弾く
+                // 先頭が0000や1111などは不正
+                $parts = explode('-', $data['tel']);
+                if (in_array($parts[0], ['0000', '1111', '2222', '3333', '4444', '5555', '6666', '7777', '8888', '9999'])) {
+                    $this->error_message['tel'] = '電話番号が正しくありません（例: 090-1234-5678）';
+                }
+            }
         }
 
         // メールアドレス

@@ -99,14 +99,21 @@ if (form) {
                         errorElement(el, '郵便番号の形式が正しくありません（例: 123-4567）');
                     }
                 } else if (field.name === 'tel') {
-                    if (el.value === '') {
+                    const val = el.value;
+                    const digits = val.replace(/[^0-9]/g, '');
+                    const parts = val.split('-');
+                    if (val === '') {
                         errorElement(el, field.msg);
-                    } else if (/\s/.test(el.value)) {
+                    } else if (/\s/.test(val)) {
                         errorElement(el, '空白を削除してください');
-                    } else if (!/[0-9]/.test(el.value)) {
+                    } else if (!/[0-9]/.test(val)) {
                         errorElement(el, '数字を入力してください');
-                    } else if (!/^0\d{1,4}-\d{1,4}-\d{3,4}$/.test(el.value)) {
+                    } else if (!/^0\d{1,4}-\d{1,4}-\d{3,4}$/.test(val)) {
                         errorElement(el, '電話番号の形式が正しくありません（例: 090-1234-5678）');
+                    } else if (val.length < 12 || val.length > 13) {
+                        errorElement(el, '電話番号はハイフンを含めて12～13文字で入力してください');
+                    } else if (parts.length === 3 && ['0000', '1111', '2222', '3333', '4444', '5555', '6666', '7777', '8888', '9999'].includes(parts[0])) {
+                        errorElement(el, '電話番号が正しくありません（例: 090-1234-5678）');
                     }
                 } else if (field.name === 'email') {
                     if (el.value === '') {

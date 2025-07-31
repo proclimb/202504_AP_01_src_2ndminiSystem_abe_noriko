@@ -63,29 +63,36 @@ try {
     $address = new UserAddress($pdo);
     $address->updateByUserId($addressData); // user_id付きのデータを渡す
 
-    // 6. ファイルアップロードを BLOB 化して取得（保存期限なし = null）
-    //    edit.php の <input type="file" name="document1"> / document2
 
-    // ファイルはedit.phpからPOSTされないため、$_FILESではなくセッションやDBから取得する必要がある場合は別途実装
-    // ここでは従来通りのまま
-    $blobs = FileBlobHelper::getMultipleBlobs(
-        $_FILES['document1'] ?? null,
-        $_FILES['document2'] ?? null
-    );
+    // 6. edit.phpからセッション経由で受け取った一時ファイルをBLOB化
+    $doc1 = $_SESSION['edit_document1'] ?? null;
+    $doc2 = $_SESSION['edit_document2'] ?? null;
+    $blobs = null;
+    if ($doc1 || $doc2) {
+        $blobs = [
+            'front' => $doc1 && file_exists($doc1) ? file_get_contents($doc1) : null,
+            'back'  => $doc2 && file_exists($doc2) ? file_get_contents($doc2) : null,
+        ];
+    }
+
 
     // 7. BLOB が null でなければ（いずれかアップロードされたなら）user_documents に登録
-    if ($blobs !== null) {
-        // expires_at を NULL にして「保存期限なし」を実現
+    if ($blobs && ($blobs['front'] !== null || $blobs['back'] !== null)) {
         $expiresAt = null;
-
-        // User::saveDocument() を使って INSERT
-        // ※ メソッド定義では expires_at が nullable なので null を渡す
         $user->saveDocument(
             $id,
-            $blobs['front'],  // image(表)
-            $blobs['back'],   // image(裏)
+            $blobs['front'],
+            $blobs['back'],
             $expiresAt
         );
+    }
+
+    // 一時ファイル削除とセッションunset
+    foreach (['edit_document1', 'edit_document2'] as $key) {
+        if (!empty($_SESSION[$key]) && file_exists($_SESSION[$key])) {
+            @unlink($_SESSION[$key]);
+        }
+        unset($_SESSION[$key]);
     }
 
     // 8. トランザクションコミット

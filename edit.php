@@ -42,6 +42,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['name'])) {
     $validator = new Validator();
     // 生年月日チェックをスキップし、本人確認書類の形式チェックも有効化（添付は必須ではない）
     if ($validator->validate($_POST, ['skip_birth_date' => true, 'check_documents' => true])) {
+        // ファイルアップロード処理
+        $uploadDir = sys_get_temp_dir();
+        $fileFields = ['document1', 'document2'];
+        foreach ($fileFields as $field) {
+            if (isset($_FILES[$field]) && is_uploaded_file($_FILES[$field]['tmp_name'])) {
+                $ext = pathinfo($_FILES[$field]['name'], PATHINFO_EXTENSION);
+                $tmpFile = tempnam($uploadDir, $field . '_');
+                // 拡張子を維持
+                $newFile = $tmpFile . ($ext ? ('.' . $ext) : '');
+                move_uploaded_file($_FILES[$field]['tmp_name'], $newFile);
+                $_SESSION['edit_' . $field] = $newFile;
+            } else {
+                $_SESSION['edit_' . $field] = null;
+            }
+        }
         $_SESSION['edit_data'] = $_POST;
         header('Location: update.php');
         exit();

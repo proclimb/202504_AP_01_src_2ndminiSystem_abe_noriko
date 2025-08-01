@@ -160,6 +160,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['name'])) {
                     <div class="preview-container">
                         <img id="preview1" src="#" alt="プレビュー画像１" style="display: none; max-width: 200px; margin-top: 8px;">
                     </div>
+                    <?php if (isset($error_message['document1'])) : ?>
+                        <div class="error-msg"><?= htmlspecialchars($error_message['document1']) ?></div>
+                    <?php endif ?>
                 </div>
                 <div>
                     <label>本人確認書類（裏）</label>
@@ -168,6 +171,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['name'])) {
                     <div class="preview-container">
                         <img id="preview2" src="#" alt="プレビュー画像２" style="display: none; max-width: 200px; margin-top: 8px;">
                     </div>
+                    <?php if (isset($error_message['document2'])) : ?>
+                        <div class="error-msg"><?= htmlspecialchars($error_message['document2']) ?></div>
+                    <?php endif ?>
                 </div>
             </div>
             <button type="submit">更新</button>

@@ -66,21 +66,34 @@ if (form) {
     fileFields.forEach(function (field) {
         var el = form[field.name];
         if (el) {
-            el.addEventListener('change', function () {
-                // 直後の.error-msgを消す（重複防止）
-                var next = el.nextElementSibling;
-                if (next && next.classList && next.classList.contains('error-msg')) {
-                    next.parentNode.removeChild(next);
+            var checkFile = function () {
+                // 親div内の.error-msgをすべて消す
+                var parentDiv = el.closest('div');
+                if (parentDiv) {
+                    var errs = parentDiv.querySelectorAll('.error-msg');
+                    errs.forEach(function (err) { err.remove(); });
                 }
                 el.classList.remove('error-form');
                 if (el.files && el.files.length > 0) {
                     var file = el.files[0];
                     var type = file.type;
-                    if (type !== 'image/png' && type !== 'image/jpeg') {
-                        errorElement(el, field.label + 'はPNGまたはJPEG形式のみアップロード可能です');
+                    var name = file.name || '';
+                    var ext = name.split('.').pop().toLowerCase();
+                    var valid = (type === 'image/png' || type === 'image/jpeg');
+                    // typeが空の場合は拡張子で判定
+                    if (!valid && type === '' && (ext === 'png' || ext === 'jpg' || ext === 'jpeg')) {
+                        valid = true;
+                    }
+                    if (!valid && parentDiv) {
+                        var errDiv = document.createElement('div');
+                        errDiv.className = 'error-msg';
+                        errDiv.textContent = field.label + 'はPNGまたはJPEG形式のみアップロード可能です';
+                        parentDiv.appendChild(errDiv);
                     }
                 }
-            });
+            };
+            el.addEventListener('change', checkFile);
+            el.addEventListener('input', checkFile);
         }
     });
 

@@ -58,6 +58,32 @@ if (form) {
         { name: 'email', msg: 'メールアドレスが入力されていません' }
     ];
 
+    // 本人確認書類ファイルのリアルタイムチェック
+    var fileFields = [
+        { name: 'document1', label: '本人確認書類（表）' },
+        { name: 'document2', label: '本人確認書類（裏）' }
+    ];
+    fileFields.forEach(function (field) {
+        var el = form[field.name];
+        if (el) {
+            el.addEventListener('change', function () {
+                // 直後の.error-msgを消す（重複防止）
+                var next = el.nextElementSibling;
+                if (next && next.classList && next.classList.contains('error-msg')) {
+                    next.parentNode.removeChild(next);
+                }
+                el.classList.remove('error-form');
+                if (el.files && el.files.length > 0) {
+                    var file = el.files[0];
+                    var type = file.type;
+                    if (type !== 'image/png' && type !== 'image/jpeg') {
+                        errorElement(el, field.label + 'はPNGまたはJPEG形式のみアップロード可能です');
+                    }
+                }
+            });
+        }
+    });
+
     // 入力時（inputイベント）でリアルタイム簡易チェック
     requiredFields.forEach(function (field) {
         var el = form[field.name];

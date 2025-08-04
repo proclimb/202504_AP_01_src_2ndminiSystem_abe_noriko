@@ -97,20 +97,24 @@ class UserAddress
     }
 
     /**
-     * 住所の整合性チェック（郵便番号・都道府県・市区町村の組み合わせが正しいか）
+     * 住所の正規化
+     * - 全角数字 → 半角
+     * - スペース除去
+     * - ハイフンを統一
+     * - カッコ内の内容を削除
+     * - 漢数字（一〜十）をアラビア数字に変換
      */
-    public function validateAddress($postal_code, $prefecture, $city_town): bool
+    private function normalizeAddress(string $str): string
     {
-        $sql = "SELECT COUNT(*) FROM postal_master
-                WHERE postal_code = :postal_code
-                  AND prefecture = :prefecture
-                  AND city_town = :city_town";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([
-            ':postal_code' => $postal_code,
-            ':prefecture'  => $prefecture,
-            ':city_town'   => $city_town
-        ]);
-        return $stmt->fetchColumn() > 0;
+        $str = mb_convert_kana($str, 'n'); // 全角→半角
+        $str = preg_replace('/[　\s]/u', '', $str); // 空白除去
+        $str = str_replace(['ー', '―', '－'], '-', $str); // ハイフン統一
+        $str = preg_replace('/（.*?）/u', '', $str); // 全角カッコ内削除
+        $str = str_replace(
+            ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'],
+            ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
+            $str
+        );
+        return $str;
     }
 }

@@ -70,8 +70,8 @@ session_destroy();
     <meta charset="UTF-8">
     <title>mini System</title>
     <link rel="stylesheet" href="style_new.css">
-    <script src="postalcodesearch.js"></script>
-    <script src="contact.js"></script>
+    <script src="postalcodesearch.js" defer></script>
+    <script src="contact.js" defer></script>
 </head>
 
 <body>

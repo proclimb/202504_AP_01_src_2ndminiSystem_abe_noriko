@@ -55,10 +55,8 @@ if (!empty($_POST) && empty($_SESSION['input_data'])) {
     }
 }
 
-// 4.セッションを破棄する（POST送信時のみ破棄）
-if (!empty($_POST) && empty($_SESSION['input_data'])) {
-    session_destroy();
-}
+// 4.セッションを破棄する
+session_destroy();
 
 // 5.html の描画
 // ** これ以降は、htmlの部分になります
@@ -72,8 +70,8 @@ if (!empty($_POST) && empty($_SESSION['input_data'])) {
     <meta charset="UTF-8">
     <title>mini System</title>
     <link rel="stylesheet" href="style_new.css">
-    <script src="postalcodesearch.js" defer></script>
-    <script src="contact.js" defer></script>
+    <script src="postalcodesearch.js"></script>
+    <script src="contact.js"></script>
 </head>
 
 <body>
@@ -114,27 +112,27 @@ if (!empty($_POST) && empty($_SESSION['input_data'])) {
                 </div>
                 <div>
                     <label>性別<span>必須</span></label>
-                    <?php $gender = $old['gender'] ?? '1'; ?>
+                    <?php $gender = $old['gender_flag'] ?? '1'; ?>
                     <label class="gender">
                         <input
                             type="radio"
                             name="gender"
                             value='1'
-                            <?= ($old['gender'] ?? '1') == '1'
+                            <?= ($old['gender_flag'] ?? '1') == '1'
                                 ? 'checked' : '' ?>>男性</label>
                     <label class="gender">
                         <input
                             type="radio"
                             name="gender"
                             value='2'
-                            <?= ($old['gender'] ?? '') == '2'
+                            <?= ($old['gender_flag'] ?? '') == '2'
                                 ? 'checked' : '' ?>>女性</label>
                     <label class="gender">
                         <input
                             type="radio"
                             name="gender"
                             value='3'
-                            <?= ($old['gender'] ?? '') == '3'
+                            <?= ($old['gender_flag'] ?? '') == '3'
                                 ? 'checked' : '' ?>>その他</label>
                 </div>
                 <div>
@@ -200,7 +198,7 @@ if (!empty($_POST) && empty($_SESSION['input_data'])) {
                             id="searchAddressBtn">住所検索</button>
                     </div>
                     <?php if (isset($error_message['postal_code'])) : ?>
-                        <div class="error-msg">
+                        <div class="error-msg2">
                             <?= htmlspecialchars($error_message['postal_code']) ?></div>
                     <?php endif ?>
                 </div>

@@ -117,4 +117,69 @@ class UserAddress
         );
         return $str;
     }
+
+    /**
+     * 郵便番号と住所の整合性チェック
+     * - 郵便番号と都道府県でaddress_masterから住所候補を取得
+     * - 入力された市区町村・番地部分とマスタの住所を正規化して比較
+     *
+     * @param string $postalCode 郵便番号
+     * @param string $prefecture 都道府県
+     * @param string $cityTown 市区町村・番地
+     * @return bool 一致すれば true、そうでなければ false
+     */
+    public function checkAddressMatch(string $postalCode, string $prefecture, string $cityTown): bool
+    {
+        // 郵便番号を半角数字に統一しハイフン削除
+        $postalCode = mb_convert_kana(str_replace('-', '', trim($postalCode)), 'n');
+        $normPref = $this->normalizeAddress($prefecture);
+        $normInputCityTown = $this->normalizeAddress($cityTown);
+
+        $sql = "
+            SELECT city, town
+            FROM address_master
+            WHERE postal_code = :postal_code
+            AND prefecture = :prefecture
+        ";
+
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([
+                ':postal_code' => $postalCode,
+                ':prefecture' => $normPref,
+            ]);
+
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            if (!$results) {
+                // マスタに該当住所なし
+                return false;
+            }
+
+            foreach ($results as $row) {
+                $masterCity = $this->normalizeAddress($row['city']);
+                $masterTown = $this->normalizeAddress($row['town']);
+
+                // 「以下に掲載がない場合」などはスキップ
+                if ($masterTown === '以下に掲載がない場合' || $masterTown === '') {
+                    continue;
+                }
+
+                $fullMasterAddress = $masterCity . $masterTown;
+
+                // 入力住所がマスタ住所を含む、またはマスタ住所が入力住所を含むならOKと判断
+                if (
+                    mb_strpos($normInputCityTown, $fullMasterAddress) !== false
+                    || mb_strpos($fullMasterAddress, $normInputCityTown) !== false
+                ) {
+                    return true;
+                }
+            }
+
+            // どれもマッチしなければfalse
+            return false;
+        } catch (PDOException $e) {
+            // 例外時はfalse
+            return false;
+        }
+    }
 }

@@ -6,7 +6,8 @@
 // address_master テーブルに丸ごと取り込む。
 // ──────────────────────────────────────────
 
-require_once 'Db.php'; // ※Db.php で PDO 接続 ($pdo) を行っている前提
+// Db.php で PDO インスタンスを返す形に修正している想定
+$pdo = require_once 'Db.php'; // ※Db.php で PDO 接続 ($pdo) を返す
 
 // 1) CSV ファイルのパス
 $csvDir  = __DIR__ . '/csv';

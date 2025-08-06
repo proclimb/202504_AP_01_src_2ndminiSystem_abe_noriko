@@ -17,7 +17,7 @@
  */
 
 //  1.DB接続情報、クラス定義の読み込み
-require_once 'Db.php';
+$pdo = require_once 'Db.php';  // Db.phpがPDOオブジェクトを返す前提
 require_once 'User.php';
 
 // 2.更新・削除画面からの入力値を変数に設定

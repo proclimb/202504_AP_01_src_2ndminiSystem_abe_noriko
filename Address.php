@@ -78,8 +78,7 @@ class UserAddress
                 SET postal_code = :postal_code,
                     prefecture = :prefecture,
                     city_town = :city_town,
-                    building = :building,
-                    created_at = NOW()
+                    building = :building
                 WHERE user_id = :user_id";
 
         try {

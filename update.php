@@ -18,7 +18,7 @@
 session_start();
 
 //  1.DB接続情報、クラス定義の読み込み
-require_once 'Db.php';
+$pdo = require_once 'Db.php'; // Db.phpがPDOオブジェクトを返す前提
 require_once 'User.php';
 require_once 'Address.php';
 require_once 'FileBlobHelper.php';

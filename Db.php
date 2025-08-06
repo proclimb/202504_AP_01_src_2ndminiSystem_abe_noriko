@@ -31,6 +31,7 @@ $options = [
 // 4.PDOをインスタンス化
 try {
     $pdo = new PDO($dsn, $user, $password, $options);
+    return $pdo;
 } catch (PDOException $e) {
     // エラーログに記録（error_log はサーバーのログファイルなどに書き込みます）
     error_log("DB接続に失敗しました: " . $e->getMessage());

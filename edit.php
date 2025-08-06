@@ -20,7 +20,7 @@
  */
 
 //  1.DB接続情報、クラス定義の読み込み
-require_once 'Db.php';
+$pdo = require_once 'Db.php';
 require_once 'User.php';
 require_once 'Validator.php';
 
@@ -39,7 +39,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && $id) {
 
 // 更新ボタン押下時（POST）
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['name'])) {
-    $validator = new Validator();
+    // ✅ Validatorに$pdoを渡す
+    $validator = new Validator($pdo);
     // 生年月日チェックをスキップし、本人確認書類の形式チェックも有効化（添付は必須ではない）
     if ($validator->validate($_POST, ['skip_birth_date' => true, 'check_documents' => true])) {
         // ファイルアップロード処理

@@ -5,6 +5,13 @@ require_once 'Address.php'; // UserAddress クラスが定義されたファイ�
 class Validator
 {
     private $error_message = [];
+    private $pdo; // PDOインスタンスを保持
+
+    // コンストラクタでPDOを受け取るように修正
+    public function __construct(PDO $pdo)
+    {
+        $this->pdo = $pdo;
+    }
 
     // 呼び出し元で使う
     public function validate($data, $options = [])
@@ -70,9 +77,8 @@ class Validator
             $this->error_message['address'] = '市区町村・番地もしくは建物名は50文字以内で入力してください';
         } else {
             // 郵便番号との組み合わせチェック（DB確認）
-            global $pdo;
             if (!isset($this->error_message['postal_code'])) {
-                $checkAddress = new UserAddress($pdo);
+                $checkAddress = new UserAddress($this->pdo);
                 if (!$checkAddress->checkAddressMatch($data['postal_code'], $data['prefecture'], $data['city_town'])) {
                     $this->error_message['address'] = '郵便番号と住所の組み合わせが一致しません';
                 }

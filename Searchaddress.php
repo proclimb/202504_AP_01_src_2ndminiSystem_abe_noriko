@@ -1,5 +1,6 @@
 <?php
-require_once 'Db.php'; // PDO $pdo を読み込む
+// PDOインスタンスを取得
+$pdo = require_once 'Db.php';
 
 header('Content-Type: application/json');
 

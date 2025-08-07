@@ -620,6 +620,7 @@ input.readonly-field[type="text"] {
 .btn {
     display: inline-block;
     padding: 10px 13px 11px;
+    margin: 20px auto;
     font-size: 18px;
     font-weight: bold;
     color: #ffffff;
@@ -629,14 +630,15 @@ input.readonly-field[type="text"] {
     box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.28),
         inset 0px 2px 0px -1px #10a4d2;
     text-decoration: none;
-    margin: 20px auto;
-    /* ← ここでボタンリンクも中央に */
-    text-align: center;
     cursor: pointer;
+    /* 横幅を必要に応じて調整 */
+    width: 200px;
 }
 
+/* ホバー時の色変化 */
 .btn:hover {
     background-color: #007ea8;
+    border-color: #0072a0;
 }
 
 /* ---------------------------------------------------

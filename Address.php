@@ -108,7 +108,7 @@ class UserAddress
         $str = mb_convert_kana($str, 'n'); // 全角→半角
         $str = preg_replace('/[　\s]/u', '', $str); // 空白除去
         $str = str_replace(['ー', '―', '－'], '-', $str); // ハイフン統一
-        $str = preg_replace('/（.*?）/u', '', $str); // 全角カッコ内削除
+        // $str = preg_replace('/（.*?）/u', '', $str); // 全角カッコ内削除
         $str = str_replace(
             ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'],
             ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
@@ -131,7 +131,7 @@ class UserAddress
     {
         // 郵便番号を半角数字に統一しハイフン削除
         $postalCode = mb_convert_kana(str_replace('-', '', trim($postalCode)), 'n');
-        $normPref = $this->normalizeAddress($prefecture);
+        $normPref = trim($prefecture);  // 都道府県はトリムだけ
         $normInputCityTown = $this->normalizeAddress($cityTown);
 
         $sql = "
@@ -159,9 +159,10 @@ class UserAddress
                 $masterTown = $this->normalizeAddress($row['town']);
 
                 // 「以下に掲載がない場合」などはスキップ
-                if ($masterTown === '以下に掲載がない場合' || $masterTown === '') {
+                /*if ($masterTown === '以下に掲載がない場合' || $masterTown === '') {
                     continue;
                 }
+                */
 
                 $fullMasterAddress = $masterCity . $masterTown;
 

@@ -190,6 +190,59 @@ if (form) {
         });
     }
 
+    // 🔧 郵便番号 → 住所検索処理（ハイフン除去あり）
+    const postalCodeSearchBtn = document.querySelector('#search-address-btn');
+    if (postalCodeSearchBtn) {
+        postalCodeSearchBtn.addEventListener('click', function () {
+            const el = form.postal_code;
+
+            // 🔁 既存のエラーメッセージを削除（重複防止）
+            const next = el.nextElementSibling;
+            if (next && next.classList && next.classList.contains('error-msg')) {
+                next.parentNode.removeChild(next);
+            }
+            el.classList.remove('error-form');
+
+            // 入力された郵便番号を取得（ハイフン削除）
+            const rawPostalCode = el.value;
+            const postalCode = rawPostalCode.replace(/-/g, '');
+
+            // 郵便番号形式チェック
+            if (!/^\d{7}$/.test(postalCode)) {
+                errorElement(el, '郵便番号の形式が正しくありません（例: 123-4567）');
+                return;
+            }
+
+            // 郵便番号から住所検索（API連携）
+            fetch(`/api/search_address?postal_code=${postalCode}`)
+                .then(response => response.json())
+                .then(data => {
+                    // データが取得できたら住所に自動入力
+                    if (data.prefecture && data.city_town) {
+                        form.prefecture.value = data.prefecture;
+                        form.city_town.value = data.city_town;
+                    } else {
+                        // 該当なしのエラー（重複防止済み）
+                        const next = el.nextElementSibling;
+                        if (next && next.classList && next.classList.contains('error-msg')) {
+                            next.parentNode.removeChild(next);
+                        }
+                        el.classList.remove('error-form');
+                        errorElement(el, '郵便番号に該当する住所が見つかりません');
+                    }
+                })
+                .catch(() => {
+                    // 通信エラー時のエラー表示（重複防止済み）
+                    const next = el.nextElementSibling;
+                    if (next && next.classList && next.classList.contains('error-msg')) {
+                        next.parentNode.removeChild(next);
+                    }
+                    el.classList.remove('error-form');
+                    errorElement(el, '住所検索に失敗しました');
+                });
+        });
+    }
+
     // submit時のバリデーション（サーバ側Validator.phpと同じ必須・形式チェック）
     /*
     form.addEventListener('submit', function (e) {

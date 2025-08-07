@@ -79,7 +79,11 @@ class Validator
             // 郵便番号との組み合わせチェック（DB確認）
             if (!isset($this->error_message['postal_code'])) {
                 $checkAddress = new UserAddress($this->pdo);
-                if (!$checkAddress->checkAddressMatch($data['postal_code'], $data['prefecture'], $data['city_town'])) {
+                if (!$checkAddress->checkAddressMatch(
+                    $data['postal_code'],
+                    $data['prefecture'],
+                    $data['city_town']
+                )) {
                     $this->error_message['address'] = '郵便番号と住所の組み合わせが一致しません';
                 }
             }

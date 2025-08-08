@@ -525,6 +525,36 @@ input.readonly-field[type="text"] {
    ↓ ここから変更・追加箇所
    ------------------------------------------------------------------- */
 
+/* ダッシュボードに戻るボタンの色の修正 */
+.btn-dashboard-return {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #ffffff;
+    /* 白背景 */
+    color: #333333;
+    /* 少し濃いグレー文字 */
+    border: 1px solid #cccccc;
+    /* 薄いグレーの枠線 */
+    border-radius: 4px;
+    /* 角丸 */
+    font-size: 14px;
+    /* フォントサイズ調整 */
+    font-weight: bold;
+    /* 太字で視認性UP */
+    text-align: center;
+    text-decoration: none;
+    /* 下線消去 */
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.btn-dashboard-return:hover {
+    background-color: #f5f5f5;
+    /* ホバー時の白→グレー背景 */
+    color: #000000;
+    /* ホバー時の文字色（少し濃く） */
+}
+
 /* 【3】共通テーブル（dashboard.php と Csvpreview.php で使い回し可） */
 .common-table {
     border-collapse: collapse;

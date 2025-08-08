@@ -176,13 +176,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['name'])) {
                         <div class="error-msg"><?= htmlspecialchars($error_message['document2']) ?></div>
                     <?php endif ?>
                 </div>
-            </div>
-            <button type="submit">更新</button>
-            <div style="text-align: center;">
-                <a href="dashboard.php" class="btn-dashboard-return">ダッシュボードに戻る</a>
-            </div>
-        </form>
-        <form action="delete.php" method="post" name="delete">
+                <!-- ★白背景でボタンをまとめるブロック -->
+                <div class="white-button-area">
+                    <!-- 更新ボタン（editフォームのsubmit） -->
+                    <button type="submit">更新</button>
+        </form> <!-- ←editフォームをここで閉じます -->
+
+        <!-- ダッシュボードに戻るボタン -->
+        <div style="text-align: center; margin-top: 10px;">
+            <a href="dashboard.php" class="btn-dashboard-return">ダッシュボードに戻る</a>
+        </div>
+        <!-- 削除ボタン（別フォーム） -->
+        <form action="delete.php" method="post" name="delete" style="margin-top: 10px;">
             <input type="hidden" name="id" value="<?= htmlspecialchars($old['id'] ?? '') ?>">
             <button type="submit">削除</button>
         </form>

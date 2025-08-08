@@ -178,7 +178,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['name'])) {
                 </div>
             </div>
             <button type="submit">更新</button>
-            <a href="dashboard.php"><button type="button">ダッシュボードに戻る</button></a>
+            <div style="text-align: center;">
+                <a href="dashboard.php" class="btn-dashboard-return">ダッシュボードに戻る</a>
+            </div>
         </form>
         <form action="delete.php" method="post" name="delete">
             <input type="hidden" name="id" value="<?= htmlspecialchars($old['id'] ?? '') ?>">

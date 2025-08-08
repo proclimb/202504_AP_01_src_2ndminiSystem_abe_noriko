@@ -644,6 +644,15 @@ input.readonly-field[type="text"] {
 /* 【7】input.php / edit.php のフォーム下部にあるボタンを中央寄せしたい場合は、
         上記の button, input[type=button] の指定のみでカバーできます */
 
+/* フォーム下部のボタンを囲う白背景のボックス */
+.white-button-area {
+    background-color: #ffffff;
+    padding: 24px;
+    margin-top: 24px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
 /* 【8】補足: もし <a class="btn"> をそのまま使用している箇所があれば、
         下記のように .btn クラスでも中央寄せしておくと共通運用しやすいです */
 

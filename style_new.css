@@ -525,36 +525,6 @@ input.readonly-field[type="text"] {
    ↓ ここから変更・追加箇所
    ------------------------------------------------------------------- */
 
-/* ダッシュボードに戻るボタンの色の修正 */
-.btn-dashboard-return {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color: #ffffff;
-    /* 白背景 */
-    color: #333333;
-    /* 少し濃いグレー文字 */
-    border: 1px solid #cccccc;
-    /* 薄いグレーの枠線 */
-    border-radius: 4px;
-    /* 角丸 */
-    font-size: 14px;
-    /* フォントサイズ調整 */
-    font-weight: bold;
-    /* 太字で視認性UP */
-    text-align: center;
-    text-decoration: none;
-    /* 下線消去 */
-    cursor: pointer;
-    transition: background-color 0.2s ease, color 0.2s ease;
-}
-
-.btn-dashboard-return:hover {
-    background-color: #f5f5f5;
-    /* ホバー時の白→グレー背景 */
-    color: #000000;
-    /* ホバー時の文字色（少し濃く） */
-}
-
 /* 【3】共通テーブル（dashboard.php と Csvpreview.php で使い回し可） */
 .common-table {
     border-collapse: collapse;
@@ -644,15 +614,6 @@ input.readonly-field[type="text"] {
 /* 【7】input.php / edit.php のフォーム下部にあるボタンを中央寄せしたい場合は、
         上記の button, input[type=button] の指定のみでカバーできます */
 
-/* フォーム下部のボタンを囲う白背景のボックス */
-.white-button-area {
-    background-color: #ffffff;
-    padding: 24px;
-    margin-top: 24px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
 /* 【8】補足: もし <a class="btn"> をそのまま使用している箇所があれば、
         下記のように .btn クラスでも中央寄せしておくと共通運用しやすいです */
 
@@ -680,7 +641,16 @@ input.readonly-field[type="text"] {
     border-color: #0072a0;
 }
 
-/* ---------------------------------------------------
+/* --------------------------------------
+
+/* フォーム下部のボタンを囲う白背景のボックス */
+.white-button-area {
+    background-color: #ffffff;
+    padding: 24px;
+    margin-top: 24px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}-------------
    dashboard.php 用の追加スタイル
    --------------------------------------------------- */
 
@@ -711,7 +681,17 @@ input.readonly-field[type="text"] {
     font-weight: bold;
 }
 
-.pagination strong {
+.pag
+/* 削除フォームの枠線を消す */
+.form-delete {
+    border: none;
+    box-shadow: none;
+    background-color: white;
+    /* 背景白を維持したい場合 */
+    padding: 10px;
+    /* 必要なら余白も調整 */
+}
+ination strong {
     margin: 0 5px;
     color: #333;
     font-weight: bold;

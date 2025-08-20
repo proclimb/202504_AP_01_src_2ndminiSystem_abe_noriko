@@ -177,21 +177,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['name'])) {
                     <?php endif ?>
                 </div>
                 <!-- ★白背景でボタンをまとめるブロック -->
-                <div class="white-button-area">
-                    <!-- 更新ボタン（editフォームのsubmit） -->
-                    <button type="submit">更新</button>
+                <div class="white-button-area" style="text-align: center;">
+                    <button type="submit" style="display:block; margin: 0 auto 16px auto;">更新</button>
+                    <a href="dashboard.php" class="btn-dashboard-return" style="display:inline-block; margin: 0 auto; text-align:center;">ダッシュボードに戻る</a>
+                </div>
         </form> <!-- ←editフォームをここで閉じます -->
 
-        <!-- ダッシュボードに戻るボタン -->
-        <div style="text-align: center; margin-top: 10px;">
-            <a href="dashboard.php" class="btn-dashboard-return">ダッシュボードに戻る</a>
+        <!-- ★削除用の別ボックス -->
+        <div class="white-button-area" style="margin-top: 40px; text-align: center;">
+            <form action="delete.php" method="post" name="delete" style="margin:0;">
+                <input type="hidden" name="id" value="<?= htmlspecialchars($old['id'] ?? '') ?>">
+                <button type="submit" class="delete-button">削除</button>
+            </form>
         </div>
-        <!-- 削除ボタン（別フォーム） -->
-        <form action="delete.php" method="post" name="delete" style="margin-top: 10px;">
-            <input type="hidden" name="id" value="<?= htmlspecialchars($old['id'] ?? '') ?>">
-            <button type="submit">削除</button>
-        </form>
-    </div>
-</body>
-
-</html>

@@ -179,7 +179,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['name'])) {
                 <!-- ★白背景でボタンをまとめるブロック -->
                 <div class="white-button-area" style="text-align: center;">
                     <button type="submit" style="display:block; margin: 0 auto 16px auto;">更新</button>
-                    <a href="dashboard.php" class="btn-dashboard-return" style="display:inline-block; margin: 0 auto; text-align:center;">ダッシュボードに戻る</a>
+                    <button type="button" onclick="location.href='dashboard.php'" class="back-button">ダッシュボードに戻る</button>
+
                 </div>
         </form> <!-- ←editフォームをここで閉じます -->
 

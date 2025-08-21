@@ -433,9 +433,15 @@ textarea+div {
 
 /* 新規追加 */
 .error-msg2 {
+    clear: both;
+    width: 100%;
     color: red;
-    margin-left: 166px;
+    margin-top: 4px;
+    white-space: normal;
+    font-size: 0.9em;
+    margin-left: 0 !important;
 }
+
 
 .birth-selects {
     display: flex;
